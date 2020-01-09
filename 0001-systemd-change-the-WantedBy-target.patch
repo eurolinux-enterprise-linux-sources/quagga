@@ -1,0 +1,184 @@
+diff --git a/redhat/babeld.service b/redhat/babeld.service
+index b1ea943..a7ea7fe 100644
+--- a/redhat/babeld.service
++++ b/redhat/babeld.service
+@@ -1,14 +1,15 @@
+ [Unit]
+ Description=Babel routing daemon
+-BindTo=zebra.service
+-After=syslog.target network.target zebra.service
++BindsTo=zebra.service
++After=zebra.service
+ ConditionPathExists=/etc/quagga/babeld.conf
+ 
+ [Service]
+ Type=forking
++PIDFile=/run/quagga/babeld.pid
+ EnvironmentFile=/etc/sysconfig/quagga
+ ExecStart=/usr/sbin/babeld -d $BABELD_OPTS -f /etc/quagga/babeld.conf
+ Restart=on-abort
+ 
+ [Install]
+-WantedBy=network.target
++WantedBy=multi-user.target
+diff --git a/redhat/bgpd.service b/redhat/bgpd.service
+index 5040284..af923df 100644
+--- a/redhat/bgpd.service
++++ b/redhat/bgpd.service
+@@ -1,14 +1,15 @@
+ [Unit]
+ Description=BGP routing daemon
+-BindTo=zebra.service
+-After=syslog.target network.target zebra.service
++BindsTo=zebra.service
++After=zebra.service
+ ConditionPathExists=/etc/quagga/bgpd.conf
+ 
+ [Service]
+ Type=forking
++PIDFile=/run/quagga/bgpd.pid
+ EnvironmentFile=/etc/sysconfig/quagga
+ ExecStart=/usr/sbin/bgpd -d $BGPD_OPTS -f /etc/quagga/bgpd.conf
+ Restart=on-abort
+ 
+ [Install]
+-WantedBy=network.target
++WantedBy=multi-user.target
+diff --git a/redhat/isisd.service b/redhat/isisd.service
+index 4cdf67d..8687601 100644
+--- a/redhat/isisd.service
++++ b/redhat/isisd.service
+@@ -1,14 +1,15 @@
+ [Unit]
+ Description=IS-IS routing daemon
+-BindTo=zebra.service
+-After=syslog.target network.target zebra.service
++BindsTo=zebra.service
++After=zebra.service
+ ConditionPathExists=/etc/quagga/isisd.conf
+ 
+ [Service]
+ Type=forking
++PIDFile=/run/quagga/isisd.pid
+ EnvironmentFile=/etc/sysconfig/quagga
+ ExecStart=/usr/sbin/isisd -d $ISISD_OPTS -f /etc/quagga/isisd.conf
+ Restart=on-abort
+ 
+ [Install]
+-WantedBy=network.target
++WantedBy=multi-user.target
+diff --git a/redhat/ospf6d.service b/redhat/ospf6d.service
+index 3c9c466..d13e970 100644
+--- a/redhat/ospf6d.service
++++ b/redhat/ospf6d.service
+@@ -1,14 +1,15 @@
+ [Unit]
+ Description=OSPF routing daemon for IPv6
+-BindTo=zebra.service
+-After=syslog.target network.target zebra.service
++BindsTo=zebra.service
++After=zebra.service
+ ConditionPathExists=/etc/quagga/ospf6d.conf
+ 
+ [Service]
+ Type=forking
++PIDFile=/run/quagga/ospf6d.pid
+ EnvironmentFile=/etc/sysconfig/quagga
+ ExecStart=/usr/sbin/ospf6d -d $OSPF6D_OPTS -f /etc/quagga/ospf6d.conf
+ Restart=on-abort
+ 
+ [Install]
+-WantedBy=network.target
++WantedBy=multi-user.target
+diff --git a/redhat/ospfd.service b/redhat/ospfd.service
+index 5e3de23..959e649 100644
+--- a/redhat/ospfd.service
++++ b/redhat/ospfd.service
+@@ -1,14 +1,15 @@
+ [Unit]
+ Description=OSPF routing daemon
+-BindTo=zebra.service
+-After=syslog.target network.target zebra.service
++BindsTo=zebra.service
++After=zebra.service
+ ConditionPathExists=/etc/quagga/ospfd.conf
+ 
+ [Service]
+ Type=forking
++PIDFile=/run/quagga/ospfd.pid
+ EnvironmentFile=/etc/sysconfig/quagga
+ ExecStart=/usr/sbin/ospfd -d $OSPFD_OPTS -f /etc/quagga/ospfd.conf
+ Restart=on-abort
+ 
+ [Install]
+-WantedBy=network.target
++WantedBy=multi-user.target
+diff --git a/redhat/ripd.service b/redhat/ripd.service
+index d35dc47..8e7290e 100644
+--- a/redhat/ripd.service
++++ b/redhat/ripd.service
+@@ -1,14 +1,15 @@
+ [Unit]
+ Description=RIP routing daemon
+-BindTo=zebra.service
+-After=syslog.target network.target zebra.service
++BindsTo=zebra.service
++After=zebra.service
+ ConditionPathExists=/etc/quagga/ripd.conf
+ 
+ [Service]
+ Type=forking
++PIDFile=/run/quagga/ripd.pid
+ EnvironmentFile=/etc/sysconfig/quagga
+ ExecStart=/usr/sbin/ripd -d $RIPD_OPTS -f /etc/quagga/ripd.conf
+ Restart=on-abort
+ 
+ [Install]
+-WantedBy=network.target
++WantedBy=multi-user.target
+diff --git a/redhat/ripngd.service b/redhat/ripngd.service
+index 567e888..1ba6dcf 100644
+--- a/redhat/ripngd.service
++++ b/redhat/ripngd.service
+@@ -1,14 +1,15 @@
+ [Unit]
+ Description=RIP routing daemon for IPv6
+-BindTo=zebra.service
+-After=syslog.target network.target zebra.service
++BindsTo=zebra.service
++After=zebra.service
+ ConditionPathExists=/etc/quagga/ripngd.conf
+ 
+ [Service]
+ Type=forking
++PIDFile=/run/quagga/ripngd.pid
+ EnvironmentFile=/etc/sysconfig/quagga
+ ExecStart=/usr/sbin/ripngd -d $RIPNGD_OPTS -f /etc/quagga/ripngd.conf
+ Restart=on-abort
+ 
+ [Install]
+-WantedBy=network.target
++WantedBy=multi-user.target
+diff --git a/redhat/zebra.service b/redhat/zebra.service
+index 27c3a52..259fc20 100644
+--- a/redhat/zebra.service
++++ b/redhat/zebra.service
+@@ -1,14 +1,16 @@
+ [Unit]
+ Description=GNU Zebra routing manager
+-After=syslog.target network.target
++Wants=network.target
++Before=network.target
+ ConditionPathExists=/etc/quagga/zebra.conf
+ 
+ [Service]
+ Type=forking
++PIDFile=/run/quagga/zebra.pid
+ EnvironmentFile=-/etc/sysconfig/quagga
+ ExecStartPre=/sbin/ip route flush proto zebra
+ ExecStart=/usr/sbin/zebra -d $ZEBRA_OPTS -f /etc/quagga/zebra.conf
+ Restart=on-abort
+ 
+ [Install]
+-WantedBy=network.target
++WantedBy=multi-user.target
