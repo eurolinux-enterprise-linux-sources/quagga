@@ -32,7 +32,7 @@
 Summary:    Routing daemon
 Name:		quagga
 Version:	0.99.15
-Release:    5%{?dist}
+Release:    5%{?dist}.1
 License:	GPLv2+
 Group:      System Environment/Daemons
 Source0:	http://www.quagga.net/download/%{name}-%{version}.tar.gz
@@ -42,6 +42,8 @@ Patch7:		quagga-0.99.9-initscript.patch
 Patch8:		quagga-0.99.15-posix.patch
 Patch9:		quagga-0.99.15-lsbhdr.patch
 Patch10:	quagga-0.99.15-perl_pth.patch
+Patch11:	quagga-0.99.15-CVE_2948.patch
+Patch12:	quagga-0.99.15-CVE_2949.patch
 
 URL:		http://www.quagga.net
 %if %with_snmp
@@ -106,6 +108,8 @@ developing OSPF-API and quagga applications.
 %patch8 -p1 -b .posix
 %patch9 -p1 -b .lsbhdr
 %patch10 -p1 -b .perl_pth
+%patch11 -p1 -b .CVE_2948
+%patch12 -p1 -b .CVE_2949
 
 %build
 # FC5+ automatic -fstack-protector-all switch
@@ -367,6 +371,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Wed Oct 20 2010 Jiri Skala <jskala@redhat.com> - 0.99.15-5_el6_0.1
+- Resolves: #644830 - CVE-2010-2948 CVE-2010-2949 quagga various flaws
+
 * Thu May 27 2010 Jiri Skala <jskala@redhat.com> - 0.99.15-5
 - Resolves: #596202 - added -fno-strict-aliasing flag
 
