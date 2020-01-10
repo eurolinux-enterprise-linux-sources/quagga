@@ -1,0 +1,91 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## no-aspathlimit.dpatch
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Remove AS_PATHLIMIT support
+
+@DPATCH@
+diff -urNad '--exclude=CVS' '--exclude=.svn' '--exclude=.git' '--exclude=.arch' '--exclude=.hg' '--exclude=_darcs' '--exclude=.bzr' quagga-0.99.10~/bgpd/bgp_attr.c quagga-0.99.10/bgpd/bgp_attr.c
+--- quagga-0.99.10~/bgpd/bgp_attr.c	2011-02-22 15:11:09.237875222 +0100
++++ quagga-0.99.10/bgpd/bgp_attr.c	2011-02-22 15:11:50.298158065 +0100
+@@ -686,43 +686,6 @@
+     }
+ }
+ 
+-/* Parse AS_PATHLIMIT attribute in an UPDATE */
+-static int
+-bgp_attr_aspathlimit (struct peer *peer, bgp_size_t length,
+-                      struct attr *attr, u_char flag, u_char *startp)
+-{
+-  bgp_size_t total;
+-  
+-  total = length + (CHECK_FLAG (flag, BGP_ATTR_FLAG_EXTLEN) ? 4 : 3);
+-  
+-  if (!CHECK_FLAG(flag, BGP_ATTR_FLAG_TRANS)
+-       || !CHECK_FLAG(flag, BGP_ATTR_FLAG_OPTIONAL))
+-    {
+-      zlog (peer->log, LOG_ERR, 
+-	    "AS-Pathlimit attribute flag isn't transitive %d", flag);
+-      bgp_notify_send_with_data (peer, 
+-				 BGP_NOTIFY_UPDATE_ERR, 
+-				 BGP_NOTIFY_UPDATE_ATTR_FLAG_ERR,
+-				 startp, total);
+-      return -1;
+-    }
+-  
+-  if (length != 5)
+-    {
+-      zlog (peer->log, LOG_ERR, 
+-	    "AS-Pathlimit length, %u, is not 5", length);
+-      bgp_notify_send_with_data (peer, 
+-				 BGP_NOTIFY_UPDATE_ERR, 
+-				 BGP_NOTIFY_UPDATE_ATTR_FLAG_ERR,
+-				 startp, total);
+-      return -1;
+-    }
+-  
+-  attr->pathlimit.ttl = stream_getc (BGP_INPUT(peer));
+-  attr->pathlimit.as = stream_getl (BGP_INPUT(peer));
+-  attr->flag |= ATTR_FLAG_BIT (BGP_ATTR_AS_PATHLIMIT);
+-  return 0;
+-}
+ /* Get origin attribute of the update message. */
+ static int
+ bgp_attr_origin (struct peer *peer, bgp_size_t length, 
+@@ -1688,9 +1651,6 @@
+ 	case BGP_ATTR_EXT_COMMUNITIES:
+ 	  ret = bgp_attr_ext_communities (peer, length, attr, flag);
+ 	  break;
+-        case BGP_ATTR_AS_PATHLIMIT:
+-          ret = bgp_attr_aspathlimit (peer, length, attr, flag, startp);
+-          break;
+ 	default:
+ 	  ret = bgp_attr_unknown (peer, attr, flag, type, length, startp);
+ 	  break;
+@@ -2244,25 +2204,7 @@
+       stream_putl (s, attr->extra->aggregator_as);
+       stream_put_ipv4 (s, attr->extra->aggregator_addr.s_addr);
+     }
+-  
+-  /* AS-Pathlimit */
+-  if (attr->pathlimit.ttl)
+-    {
+-      u_int32_t as = attr->pathlimit.as;
+-      
+-      /* should already have been done in announce_check(), 
+-       * but just in case..
+-       */
+-      if (!as)
+-        as = peer->local_as;
+-      
+-      stream_putc (s, BGP_ATTR_FLAG_OPTIONAL|BGP_ATTR_FLAG_TRANS);
+-      stream_putc (s, BGP_ATTR_AS_PATHLIMIT);
+-      stream_putc (s, 5);
+-      stream_putc (s, attr->pathlimit.ttl);
+-      stream_putl (s, as);
+-    }
+-  
++
+   /* Unknown transit attribute. */
+   if (attr->extra && attr->extra->transit)
+     stream_put (s, attr->extra->transit->val, attr->extra->transit->length);
