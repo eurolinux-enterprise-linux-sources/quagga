@@ -1,0 +1,61 @@
+From 3aad46bdaa0a2700e43252904b9481750c8cb45d Mon Sep 17 00:00:00 2001
+From: YAMAMOTO Shigeru <shigeru@iij.ad.jp>
+Date: Wed, 28 Sep 2011 21:00:14 +0400
+Subject: [PATCH] ospfd: fix regression in recent commit
+
+commit '717750433839762d23a5f8d88fe0b4d57c8d490a' causes SEGV error,
+when 'oi = ospf_if_lookup_recv_if (ospf, iph->ip_src, ifp);' returns
+NULL.
+
+* ospf_packet.c
+  * ospf_read(): change a place of calling 'ospf_verify_header()'
+---
+ ospfd/ospf_packet.c | 25 +++++++++++++++----------
+ 1 file changed, 15 insertions(+), 10 deletions(-)
+
+diff --git a/ospfd/ospf_packet.c b/ospfd/ospf_packet.c
+index 151ed32..0f338d3 100644
+--- a/ospfd/ospf_packet.c
++++ b/ospfd/ospf_packet.c
+@@ -2455,16 +2455,10 @@ ospf_read (struct thread *thread)
+   /* associate packet with ospf interface */
+   oi = ospf_if_lookup_recv_if (ospf, iph->ip_src, ifp);
+ 
+-  /* Verify header fields before any further processing. */
+-  ret = ospf_verify_header (ibuf, oi, iph, ospfh);
+-  if (ret < 0)
+-  {
+-    if (IS_DEBUG_OSPF_PACKET (0, RECV))
+-      zlog_debug ("ospf_read[%s]: Header check failed, "
+-                  "dropping.",
+-                  inet_ntoa (iph->ip_src));
+-    return ret;
+-  }
++  /* ospf_verify_header() relies on a valid "oi" and thus can be called only
++     after the passive/backbone/other checks below are passed. These checks
++     in turn access the fields of unverified "ospfh" structure for their own
++     purposes and must remain very accurate in doing this. */
+ 
+   /* If incoming interface is passive one, ignore it. */
+   if (oi && OSPF_IF_PASSIVE_STATUS (oi) == OSPF_IF_PASSIVE)
+@@ -2556,6 +2550,17 @@ ospf_read (struct thread *thread)
+       return 0;
+     }
+ 
++  /* Verify more OSPF header fields. */
++  ret = ospf_verify_header (ibuf, oi, iph, ospfh);
++  if (ret < 0)
++  {
++    if (IS_DEBUG_OSPF_PACKET (0, RECV))
++      zlog_debug ("ospf_read[%s]: Header check failed, "
++                  "dropping.",
++                  inet_ntoa (iph->ip_src));
++    return ret;
++  }
++
+   /* Show debug receiving packet. */
+   if (IS_DEBUG_OSPF_PACKET (ospfh->type - 1, RECV))
+     {
+-- 
+1.7.11.4
+

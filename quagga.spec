@@ -32,7 +32,7 @@
 Summary:    Routing daemon
 Name:		quagga
 Version:	0.99.15
-Release:    5%{?dist}.2
+Release:    7%{?dist}.2
 License:	GPLv2+
 Group:      System Environment/Daemons
 Source0:	http://www.quagga.net/download/%{name}-%{version}.tar.gz
@@ -46,6 +46,15 @@ Patch11:	quagga-0.99.15-CVE_2948.patch
 Patch12:	quagga-0.99.15-CVE_2949.patch
 Patch13:	quagga-0.99.15-extcom.patch
 Patch14:	quagga-0.99.15-no_pthlim.patch
+Patch15:	quagga-0.99.15-CVE-2011-3323.patch
+Patch16:	0001-ospf6d-CVE-2011-3324-DD-LSA-assertion.patch
+Patch17:	quagga-0.99.15-CVE-2011-3325.patch
+Patch18:	quagga-0.99.15-CVE-2011-3326.patch
+Patch19:	0001-bgpd-CVE-2011-3327-ext.-comm.-buffer-overflow.patch
+Patch20:	0001-bgpd-Open-option-parse-errors-don-t-NOTIFY-resulting.patch
+Patch21:	quagga-0.99.15-CVE-2012-0249.patch
+Patch22:	quagga-0.99.15-CVE-2012-1820.patch
+Patch23:	0001-ospfd-fix-regression-in-recent-commit.patch
 
 URL:		http://www.quagga.net
 %if %with_snmp
@@ -114,6 +123,15 @@ developing OSPF-API and quagga applications.
 %patch12 -p1 -b .CVE_2949
 %patch13 -p1 -b .extcom
 %patch14 -p1 -b .no_pthlim
+%patch15 -p1 -b .CVE-2011-3323
+%patch16 -p1 -b .CVE-2011-3324
+%patch17 -p1 -b .CVE-2011-3325
+%patch18 -p1 -b .CVE-2011-3326
+%patch19 -p1 -b .CVE-2011-3327
+%patch20 -p1 -b .CVE-2012-0255
+%patch21 -p1 -b .CVE-2012-0249
+%patch22 -p1 -b .CVE-2012-1820
+%patch23 -p1 -b .CVE-2011-3325-2
 
 %build
 # FC5+ automatic -fstack-protector-all switch
@@ -375,11 +393,24 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
-* Thu Mar 03 2011 Jiri Skala <jskala@redhat.com> - 0.99.15-5_el6_0.2
-- Resolves: #684750 - CVE-2010-1674 CVE-2010-1675 quagga various flaws
+* Fri Aug 17 2012 Adam Tkac <atkac redhat com> - 0.99.15-7.2
+- improve fix for CVE-2011-3325
 
-* Wed Oct 20 2010 Jiri Skala <jskala@redhat.com> - 0.99.15-5_el6_0.1
-- Resolves: #644830 - CVE-2010-2948 CVE-2010-2949 quagga various flaws
+* Wed Aug 08 2012 Adam Tkac <atkac redhat com> - 0.99.15-7.1
+- fix CVE-2011-3323
+- fix CVE-2011-3324
+- fix CVE-2011-3325
+- fix CVE-2011-3326
+- fix CVE-2011-3327
+- fix CVE-2012-0255
+- fix CVE-2012-0249 and CVE-2012-0250
+- fix CVE-2012-1820
+
+* Thu Mar 03 2011 Jiri Skala <jskala@redhat.com> - 0.99.15-7
+- Resolves: #684751 - CVE-2010-1674 CVE-2010-1675 quagga various flaws
+
+* Wed Oct 20 2010 Jiri Skala <jskala@redhat.com> - 0.99.15-6
+- Resolves: #644832 - CVE-2010-2948 CVE-2010-2949 quagga various flaws
 
 * Thu May 27 2010 Jiri Skala <jskala@redhat.com> - 0.99.15-5
 - Resolves: #596202 - added -fno-strict-aliasing flag

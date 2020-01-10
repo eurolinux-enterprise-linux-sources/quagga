@@ -1,0 +1,87 @@
+From 5861739f8c38bc36ea9955e5cb2be2bf2f482d70 Mon Sep 17 00:00:00 2001
+From: Paul Jakma <paul@quagga.net>
+Date: Mon, 9 Jan 2012 20:59:26 +0000
+Subject: [PATCH] bgpd: Open option parse errors don't NOTIFY, resulting in
+ abort & DoS
+
+* bgp_packet.c: (bgp_open_receive) Errors from bgp_open_option_parse are
+  detected, and the code will stop processing the OPEN and return.  However
+  it does so without calling bgp_notify_send to send a NOTIFY - which means
+  the peer FSM doesn't get stopped, and bgp_read will be called again later.
+  Because it returns, it doesn't go through the code near the end of the
+  function that removes the current message from the peer input streaam.
+  Thus the next call to bgp_read will try to parse a half-parsed stream as
+  if it were a new BGP message, leading to an assert later in the code when
+  it tries to read stuff that isn't there. Add the required call to
+  bgp_notify_send before returning.
+* bgp_open.c: (bgp_capability_as4) Be a bit stricter, check the length field
+  corresponds to the only value it can be, which is the amount we're going to
+  read off the stream. And make sure the capability flag gets set, so
+  callers can know this capability was read, regardless.
+  (peek_for_as4_capability) Let bgp_capability_as4 do the length check.
+---
+ bgpd/bgp_open.c   | 14 +++++++++-----
+ bgpd/bgp_packet.c | 10 +++++++---
+ 2 files changed, 16 insertions(+), 8 deletions(-)
+
+diff --git a/bgpd/bgp_open.c b/bgpd/bgp_open.c
+index 82deb3d..b5b50bb 100644
+--- a/bgpd/bgp_open.c
++++ b/bgpd/bgp_open.c
+@@ -421,13 +421,20 @@ bgp_capability_restart (struct peer *peer, struct capability_header *caphdr)
+ static as_t
+ bgp_capability_as4 (struct peer *peer, struct capability_header *hdr)
+ {
++  SET_FLAG (peer->cap, PEER_CAP_AS4_RCV);
++  
++  if (hdr->length != CAPABILITY_CODE_AS4_LEN)
++    {
++      zlog_err ("%s AS4 capability has incorrect data length %d",
++                peer->host, hdr->length);
++      return 0;
++    }
++  
+   as_t as4 = stream_getl (BGP_INPUT(peer));
+   
+   if (BGP_DEBUG (as4, AS4))
+     zlog_debug ("%s [AS4] about to set cap PEER_CAP_AS4_RCV, got as4 %u",
+                 peer->host, as4);
+-  SET_FLAG (peer->cap, PEER_CAP_AS4_RCV);
+-  
+   return as4;
+ }
+ 
+@@ -689,9 +696,6 @@ peek_for_as4_capability (struct peer *peer, u_char length)
+ 
+ 	      if (hdr.code == CAPABILITY_CODE_AS4)
+ 	        {
+-	          if (hdr.length != CAPABILITY_CODE_AS4_LEN)
+-	            goto end;
+-                  
+ 	          if (BGP_DEBUG (as4, AS4))
+ 	            zlog_info ("[AS4] found AS4 capability, about to parse");
+ 	          as4 = bgp_capability_as4 (peer, &hdr);
+diff --git a/bgpd/bgp_packet.c b/bgpd/bgp_packet.c
+index f5a74d1..5d8087a 100644
+--- a/bgpd/bgp_packet.c
++++ b/bgpd/bgp_packet.c
+@@ -1459,9 +1459,13 @@ bgp_open_receive (struct peer *peer, bgp_size_t size)
+   /* Open option part parse. */
+   if (optlen != 0) 
+     {
+-      ret = bgp_open_option_parse (peer, optlen, &capability);
+-      if (ret < 0)
+-	return ret;
++      if ((ret = bgp_open_option_parse (peer, optlen, &capability)) < 0)
++        {
++          bgp_notify_send (peer,
++                 BGP_NOTIFY_OPEN_ERR,
++                 BGP_NOTIFY_OPEN_UNACEP_HOLDTIME);
++	  return ret;
++        }
+     }
+   else
+     {
+-- 
+1.7.11.2
+
