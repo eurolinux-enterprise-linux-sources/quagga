@@ -1,0 +1,73 @@
+From 56caf881c82d5b403997b0a4e6622465ab91475a Mon Sep 17 00:00:00 2001
+From: David Ward <david.ward@ll.mit.edu>
+Date: Tue, 5 Jan 2010 02:45:39 +0000
+Subject: [PATCH] ospf6d: Fix crash when '[no] ipv6 ospf6 advertise
+ prefix-list' is in startup-config
+
+* ospf6_interface.c: When '[no] ipv6 ospf6 advertise prefix-list'
+  appears in the startup configuration for ospf6d, a crash occurs,
+  because ospf6d attempts to schedule LSAs when the 'oi->area'
+  structure has not yet been initialized.
+
+  Now, when the command above is issued (either in the startup
+  configuration or at runtime), ospf6d will only schedule LSAs if
+  the 'oi->area' structure has been initalized. A similar test is
+  already used when handling the commands 'ipv6 ospf6 priority'
+  and 'ipv6 ospf6 cost'.
+---
+ ospf6d/ospf6_interface.c | 28 ++++++++++++++++++----------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
+
+diff --git a/ospf6d/ospf6_interface.c b/ospf6d/ospf6_interface.c
+index 2cd5303..d3ec436 100644
+--- a/ospf6d/ospf6_interface.c
++++ b/ospf6d/ospf6_interface.c
+@@ -1411,13 +1411,17 @@ DEFUN (ipv6_ospf6_advertise_prefix_list,
+   oi->plist_name = XSTRDUP (MTYPE_PREFIX_LIST_STR, argv[0]);
+ 
+   ospf6_interface_connected_route_update (oi->interface);
+-  OSPF6_LINK_LSA_SCHEDULE (oi);
+-  if (oi->state == OSPF6_INTERFACE_DR)
++
++  if (oi->area)
+     {
+-      OSPF6_NETWORK_LSA_SCHEDULE (oi);
+-      OSPF6_INTRA_PREFIX_LSA_SCHEDULE_TRANSIT (oi);
++      OSPF6_LINK_LSA_SCHEDULE (oi);
++      if (oi->state == OSPF6_INTERFACE_DR)
++        {
++          OSPF6_NETWORK_LSA_SCHEDULE (oi);
++          OSPF6_INTRA_PREFIX_LSA_SCHEDULE_TRANSIT (oi);
++        }
++      OSPF6_INTRA_PREFIX_LSA_SCHEDULE_STUB (oi->area);
+     }
+-  OSPF6_INTRA_PREFIX_LSA_SCHEDULE_STUB (oi->area);
+ 
+   return CMD_SUCCESS;
+ }
+@@ -1450,13 +1454,17 @@ DEFUN (no_ipv6_ospf6_advertise_prefix_list,
+     }
+ 
+   ospf6_interface_connected_route_update (oi->interface);
+-  OSPF6_LINK_LSA_SCHEDULE (oi);
+-  if (oi->state == OSPF6_INTERFACE_DR)
++
++  if (oi->area)
+     {
+-      OSPF6_NETWORK_LSA_SCHEDULE (oi);
+-      OSPF6_INTRA_PREFIX_LSA_SCHEDULE_TRANSIT (oi);
++      OSPF6_LINK_LSA_SCHEDULE (oi);
++      if (oi->state == OSPF6_INTERFACE_DR)
++        {
++          OSPF6_NETWORK_LSA_SCHEDULE (oi);
++          OSPF6_INTRA_PREFIX_LSA_SCHEDULE_TRANSIT (oi);
++        }
++      OSPF6_INTRA_PREFIX_LSA_SCHEDULE_STUB (oi->area);
+     }
+-  OSPF6_INTRA_PREFIX_LSA_SCHEDULE_STUB (oi->area);
+ 
+   return CMD_SUCCESS;
+ }
+-- 
+2.7.4
+

@@ -1,0 +1,25 @@
+From f6fc6bf13b3974b0e4df547f8048aa7732c1f224 Mon Sep 17 00:00:00 2001
+From: Michal Sekletar <msekleta@redhat.com>
+Date: Fri, 11 Nov 2016 16:35:04 +0100
+Subject: [PATCH] Fix path of ripd pid file
+
+---
+ redhat/ripd.init | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/redhat/ripd.init b/redhat/ripd.init
+index b2fdc5d..dfb1d9d 100644
+--- a/redhat/ripd.init
++++ b/redhat/ripd.init
+@@ -22,7 +22,7 @@ PROG="ripd"
+ cmd=ripd
+ LOCK_FILE=/var/lock/subsys/ripd
+ CONF_FILE=$QCONFDIR/ripd.conf
+-PID_FILE=/var/run/quagga/ospfd.pid
++PID_FILE=/var/run/quagga/ripd.pid
+ 
+ case "$1" in
+   start)
+-- 
+2.7.4
+

@@ -1,0 +1,187 @@
+From 775eaa5ff181e5ac207d07d190a68504a62b7200 Mon Sep 17 00:00:00 2001
+From: Michal Sekletar <msekleta@redhat.com>
+Date: Fri, 4 Nov 2016 08:18:38 +0100
+Subject: [PATCH] Make sure pid file is deleted when service is stopped
+
+---
+ redhat/bgpd.init        | 3 ++-
+ redhat/isisd.init       | 3 ++-
+ redhat/ospf6d.init      | 3 ++-
+ redhat/ospfd.init       | 3 ++-
+ redhat/ripd.init        | 3 ++-
+ redhat/ripngd.init      | 3 ++-
+ redhat/watchquagga.init | 3 ++-
+ redhat/zebra.init       | 3 ++-
+ 8 files changed, 16 insertions(+), 8 deletions(-)
+
+diff --git a/redhat/bgpd.init b/redhat/bgpd.init
+index 221e53f..5620ebe 100644
+--- a/redhat/bgpd.init
++++ b/redhat/bgpd.init
+@@ -23,6 +23,7 @@ PROG="bgpd"
+ cmd=bgpd
+ LOCK_FILE=/var/lock/subsys/bgpd
+ CONF_FILE=/etc/quagga/bgpd.conf
++PID_FILE=/var/run/quagga/bgpd.pid
+ 
+ case "$1" in
+   start)
+@@ -44,7 +45,7 @@ case "$1" in
+ 	;;
+   stop)
+ 	echo -n $"Shutting down $PROG: "
+-	killproc $cmd
++	killproc -p $PID_FILE $cmd
+ 	RETVAL=$?
+ 	[ $RETVAL -eq 0 ] && rm -f $LOCK_FILE
+ 	echo
+diff --git a/redhat/isisd.init b/redhat/isisd.init
+index e5c6c19..00e8659 100644
+--- a/redhat/isisd.init
++++ b/redhat/isisd.init
+@@ -19,6 +19,7 @@ PROG="isisd"
+ cmd=isisd
+ LOCK_FILE=/var/lock/subsys/isisd
+ CONF_FILE=/etc/quagga/isisd.conf
++PID_FILE=/var/run/quagga/isisd.pid
+ 
+ case "$1" in
+   start)
+@@ -36,7 +37,7 @@ case "$1" in
+ 	;;
+   stop)
+ 	echo -n $"Shutting down $PROG: "
+-	killproc $cmd
++	killproc -p $PID_FILE $cmd
+ 	RETVAL=$?
+ 	[ $RETVAL -eq 0 ] && rm -f $LOCK_FILE
+ 	echo
+diff --git a/redhat/ospf6d.init b/redhat/ospf6d.init
+index fcf617b..0848a97 100644
+--- a/redhat/ospf6d.init
++++ b/redhat/ospf6d.init
+@@ -22,6 +22,7 @@ PROG="ospf6d"
+ cmd=ospf6d
+ LOCK_FILE=/var/lock/subsys/ospf6d
+ CONF_FILE=/etc/quagga/ospf6d.conf
++PID_FILE=/var/run/quagga/ospf6d.pid
+ 
+ case "$1" in
+   start)
+@@ -43,7 +44,7 @@ case "$1" in
+ 	;;
+   stop)
+ 	echo -n $"Shutting down $PROG: "
+-	killproc $cmd
++	killproc -p $PID_FILE $cmd
+ 	RETVAL=$?
+ 	[ $RETVAL -eq 0 ] && rm -f $LOCK_FILE
+ 	echo
+diff --git a/redhat/ospfd.init b/redhat/ospfd.init
+index fffde62..ac71073 100644
+--- a/redhat/ospfd.init
++++ b/redhat/ospfd.init
+@@ -22,6 +22,7 @@ PROG="ospfd"
+ cmd=ospfd
+ LOCK_FILE=/var/lock/subsys/ospfd
+ CONF_FILE=/etc/quagga/ospfd.conf
++PID_FILE=/var/run/quagga/ospfd.pid
+ 
+ case "$1" in
+   start)
+@@ -43,7 +44,7 @@ case "$1" in
+ 	;;
+   stop)
+ 	echo -n $"Shutting down $PROG: "
+-	killproc $cmd
++	killproc -p $PID_FILE $cmd
+ 	RETVAL=$?
+ 	[ $RETVAL -eq 0 ] && rm -f $LOCK_FILE
+ 	echo
+diff --git a/redhat/ripd.init b/redhat/ripd.init
+index e92f38b..90b89c5 100644
+--- a/redhat/ripd.init
++++ b/redhat/ripd.init
+@@ -22,6 +22,7 @@ PROG="ripd"
+ cmd=ripd
+ LOCK_FILE=/var/lock/subsys/ripd
+ CONF_FILE=/etc/quagga/ripd.conf
++PID_FILE=/var/run/quagga/ospfd.pid
+ 
+ case "$1" in
+   start)
+@@ -43,7 +44,7 @@ case "$1" in
+ 	;;
+   stop)
+ 	echo -n $"Shutting down $PROG: "
+-	killproc $cmd
++	killproc -p $PID_FILE $cmd
+ 	RETVAL=$?
+ 	[ $RETVAL -eq 0 ] && rm -f $LOCK_FILE
+ 	echo
+diff --git a/redhat/ripngd.init b/redhat/ripngd.init
+index d0db2e7..f1c539f 100644
+--- a/redhat/ripngd.init
++++ b/redhat/ripngd.init
+@@ -22,6 +22,7 @@ PROG="ripngd"
+ cmd=ripngd
+ LOCK_FILE=/var/lock/subsys/ripngd
+ CONF_FILE=/etc/quagga/ripngd.conf
++PID_FILE=/var/run/quagga/ripngd.pid
+ 
+ case "$1" in
+   start)
+@@ -43,7 +44,7 @@ case "$1" in
+ 	;;
+   stop)
+ 	echo -n $"Shutting down $PROG: "
+-	killproc $cmd
++	killproc -p $PID_FILE $cmd
+ 	RETVAL=$?
+ 	[ $RETVAL -eq 0 ] && rm -f $LOCK_FILE
+ 	echo
+diff --git a/redhat/watchquagga.init b/redhat/watchquagga.init
+index 393ae03..fb443f8 100644
+--- a/redhat/watchquagga.init
++++ b/redhat/watchquagga.init
+@@ -19,6 +19,7 @@ RETVAL=0
+ PROG="watchquagga"
+ cmd=watchquagga
+ LOCK_FILE=/var/lock/subsys/watchquagga
++PID_FILE=/var/run/quagga/watchquagga.pid
+ 
+ case "$1" in
+   start)
+@@ -36,7 +37,7 @@ case "$1" in
+ 	;;
+   stop)
+ 	echo -n $"Shutting down $PROG: "
+-	killproc $cmd
++	killproc -p $PID_FILE $cmd
+ 	RETVAL=$?
+ 	[ $RETVAL -eq 0 ] && rm -f $LOCK_FILE
+ 	echo
+diff --git a/redhat/zebra.init b/redhat/zebra.init
+index 3a3213c..e28d82c 100644
+--- a/redhat/zebra.init
++++ b/redhat/zebra.init
+@@ -19,6 +19,7 @@ PROG="zebra"
+ cmd=zebra
+ LOCK_FILE=/var/lock/subsys/zebra
+ CONF_FILE=/etc/quagga/zebra.conf
++PID_FILE=/var/run/quagga/zebra.pid
+ 
+ case "$1" in
+   start)
+@@ -43,7 +44,7 @@ case "$1" in
+ 	;;
+   stop)
+ 	echo -n $"Shutting down $PROG: "
+-	killproc $cmd
++	killproc -p $PID_FILE $cmd
+ 	RETVAL=$?
+ 	[ $RETVAL -eq 0 ] && rm -f $LOCK_FILE
+ 	echo
+-- 
+2.7.4
+

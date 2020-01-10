@@ -1,0 +1,46 @@
+From 82ac0865ef9b2e4d929ac8888c77b7026cbac79f Mon Sep 17 00:00:00 2001
+From: Michal Sekletar <msekleta@redhat.com>
+Date: Fri, 4 Nov 2016 08:05:07 +0100
+Subject: [PATCH] watchquagga: initscript improvements
+
+---
+ redhat/watchquagga.init | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/redhat/watchquagga.init b/redhat/watchquagga.init
+index 84cd0c9..393ae03 100644
+--- a/redhat/watchquagga.init
++++ b/redhat/watchquagga.init
+@@ -36,17 +36,17 @@ case "$1" in
+ 	;;
+   stop)
+ 	echo -n $"Shutting down $PROG: "
+-	killproc $cmg
++	killproc $cmd
+ 	RETVAL=$?
+ 	[ $RETVAL -eq 0 ] && rm -f $LOCK_FILE
+ 	echo
+ 	;;
+-  restart|reload)
++  restart|reload|force-reload)
+         $0 stop
+         $0 start
+ 	RETVAL=$?
+         ;;
+-  condrestart)
++  condrestart|try-restart)
+         if [ -f $LOCK_FILE ]; then
+                 $0 stop
+ 		$0 start
+@@ -58,7 +58,7 @@ case "$1" in
+ 	RETVAL=$?
+         ;;
+   *)
+-	echo $"Usage: $0 {start|stop|restart|reload|condrestart|status}"
++	echo $"Usage: $0 {start|stop|restart|reload|force-reload|condrestart|try-restart|status}"
+ 	exit 2
+ esac
+ 
+-- 
+2.7.4
+

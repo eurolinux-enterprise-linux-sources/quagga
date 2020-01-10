@@ -1,0 +1,25 @@
+From 0f11539cdb487b331b02f38a95cfa0bb1446448a Mon Sep 17 00:00:00 2001
+From: Michal Sekletar <msekleta@redhat.com>
+Date: Thu, 10 Nov 2016 16:42:01 +0100
+Subject: [PATCH] $prog is unset use $PROG instead
+
+---
+ redhat/watchquagga.init | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/redhat/watchquagga.init b/redhat/watchquagga.init
+index fb443f8..0662b6e 100644
+--- a/redhat/watchquagga.init
++++ b/redhat/watchquagga.init
+@@ -29,7 +29,7 @@ case "$1" in
+ 	# Check that there are daemons to be monitored.
+ 	[ -z "$WATCH_DAEMONS" ] && exit 1
+ 
+-	echo -n $"Starting $prog: "
++	echo -n $"Starting $PROG: "
+         daemon $cmd -d $WATCH_OPTS $WATCH_DAEMONS
+ 	RETVAL=$?
+ 	[ $RETVAL -eq 0 ] && touch $LOCK_FILE
+-- 
+2.7.4
+

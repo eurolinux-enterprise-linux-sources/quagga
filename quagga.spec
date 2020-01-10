@@ -32,11 +32,13 @@
 Summary:    Routing daemon
 Name:		quagga
 Version:	0.99.15
-Release:    7%{?dist}.2
+Release:        14%{?dist}
 License:	GPLv2+
 Group:      System Environment/Daemons
 Source0:	http://www.quagga.net/download/%{name}-%{version}.tar.gz
 Source1:    quagga-filter-perl-requires.sh
+Source2:	watchquagga.8
+Source3:	ospfclient.8
 Patch2:		quagga-0.96.5-nostart.patch
 Patch7:		quagga-0.99.9-initscript.patch
 Patch8:		quagga-0.99.15-posix.patch
@@ -55,6 +57,17 @@ Patch20:	0001-bgpd-Open-option-parse-errors-don-t-NOTIFY-resulting.patch
 Patch21:	quagga-0.99.15-CVE-2012-0249.patch
 Patch22:	quagga-0.99.15-CVE-2012-1820.patch
 Patch23:	0001-ospfd-fix-regression-in-recent-commit.patch
+Patch24:        0001-watchquagga-initscript-improvements.patch
+Patch25:        0001-Make-sure-pid-file-is-deleted-when-service-is-stoppe.patch
+Patch26:        0001-Use-QCONFDIR-variable-in-initscripts-correctly.patch
+Patch27:        0001-ospf6d-Fix-crash-when-no-ipv6-ospf6-advertise-prefix.patch
+Patch28:        0001-ospfd-CVE-2013-2236-stack-overrun-in-apiserver.patch
+Patch29:        0001-zebra-stack-overrun-in-IPv6-RA-receive-code-CVE-2016.patch
+Patch30:        0001-bgpd-Fix-VU-270232-VPNv4-NLRI-parser-memcpys-to-stac.patch
+Patch31:        0001-bgpd-Fix-buffer-overflow-error-in-bgp_dump_routes_fu.patch
+Patch32:        0001-prog-is-unset-use-PROG-instead.patch
+Patch33:        0001-Fix-path-of-ripd-pid-file.patch
+Patch34:        quagga-0.99.15-CVE-2017-5495.patch
 
 URL:		http://www.quagga.net
 %if %with_snmp
@@ -132,6 +145,17 @@ developing OSPF-API and quagga applications.
 %patch21 -p1 -b .CVE-2012-0249
 %patch22 -p1 -b .CVE-2012-1820
 %patch23 -p1 -b .CVE-2011-3325-2
+%patch24 -p1 -b .watchquagga-init
+%patch25 -p1 -b .pidfiles
+%patch26 -p1 -b .qconfdir
+%patch27 -p1 -b .adv-list
+%patch28 -p1 -b .CVE-2013-2236
+%patch29 -p1 -b .CVE-2016-1245
+%patch30 -p1 -b .CVE-2016-2342
+%patch31 -p1 -b .CVE-2016-4049
+%patch32 -p1 -b .watch-init-start
+%patch33 -p1 -b .ripd
+%patch34 -p1 -b .CVE-2017-5495
 
 %build
 # FC5+ automatic -fstack-protector-all switch
@@ -222,12 +246,16 @@ install %{zeb_rh_src}/ripngd.init $RPM_BUILD_ROOT/etc/rc.d/init.d/ripngd
 %endif
 install %{zeb_rh_src}/ospfd.init $RPM_BUILD_ROOT/etc/rc.d/init.d/ospfd
 install %{zeb_rh_src}/ripd.init $RPM_BUILD_ROOT/etc/rc.d/init.d/ripd
+install %{zeb_rh_src}/watchquagga.init $RPM_BUILD_ROOT/etc/rc.d/init.d/watchquagga
 install -m644 %{zeb_rh_src}/quagga.sysconfig $RPM_BUILD_ROOT/etc/sysconfig/quagga
 %if %with_pam
 install -m644 %{zeb_rh_src}/quagga.pam $RPM_BUILD_ROOT/etc/pam.d/quagga
 %endif
 install -m644 %{zeb_rh_src}/quagga.logrotate $RPM_BUILD_ROOT/etc/logrotate.d/quagga
 install -d -m770  $RPM_BUILD_ROOT/var/run/quagga
+
+install -p -m644 %{SOURCE2} $RPM_BUILD_ROOT/%{_mandir}/man8/
+install -p -m644 %{SOURCE3} $RPM_BUILD_ROOT/%{_mandir}/man8/
 
 %pre
 # add vty_group
@@ -282,6 +310,7 @@ if getent passwd %quagga_user >/dev/null 2>&1 ; then : ; else \
 %endif
 /sbin/chkconfig --add ospfd
 /sbin/chkconfig --add bgpd
+/sbin/chkconfig --add watchquagga
 
 if [ -f %{_infodir}/%{name}.inf* ]; then
 	/sbin/install-info %{_infodir}/%{name}.info %{_infodir}/dir || :
@@ -332,6 +361,7 @@ if [ "$1" = "0" ]; then
 %endif
 	/sbin/chkconfig --del bgpd
 fi
+/sbin/chkconfig --del watchquagga
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -393,10 +423,34 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
-* Fri Aug 17 2012 Adam Tkac <atkac redhat com> - 0.99.15-7.2
+* Tue Jan 31 2017 Michal Ruprich <mruprich@redhat.com> - 0.99.15-14
+- Resolves: #1416013 - CVE-2017-5495 quagga: Telnet interface input buffer allocates unbounded amounts of memory
+
+* Fri Nov 11 2016 Michal Sekletar <msekleta@redhat.com> - 0.99.15-13
+- fix path of ripd pid file (#842308)
+
+* Thu Nov 10 2016 Michal Sekletar <msekleta@redhat.com> - 0.99.15-12
+- fix start() function in watchqugga initscript (#862826, #1208617)
+
+* Tue Nov 08 2016 Michal Sekletar <msekleta@redhat.com> - 0.99.15-11
+- fix for CVE-2013-2236 (#1391918)
+- fix for CVE-2016-1245 (#1391914)
+- fix for CVE-2016-2342 (#1391916)
+- fix for CVE-2016-4049 (#1391919)
+
+* Tue Nov 08 2016 Michal Sekletar <msekleta@redhat.com> - 0.99.15-11
+- ospf6d: Fix crash when '[no] ipv6 ospf6 advertise prefix-list' is in startup-config (#770731)
+
+* Tue Nov 01 2016 Michal Sekletar <msekleta@redhat.com> - 0.99.15-10
+- add watchquagga initscript (#862826, #1208617)
+- remove pidfile when service is stopped (#842308)
+- use QCONFDIR correctly in initscripts (#839620)
+- include watchquagga and ospfclient manpages (#674862)
+
+* Fri Aug 17 2012 Adam Tkac <atkac redhat com> - 0.99.15-9
 - improve fix for CVE-2011-3325
 
-* Wed Aug 08 2012 Adam Tkac <atkac redhat com> - 0.99.15-7.1
+* Wed Aug 08 2012 Adam Tkac <atkac redhat com> - 0.99.15-8
 - fix CVE-2011-3323
 - fix CVE-2011-3324
 - fix CVE-2011-3325

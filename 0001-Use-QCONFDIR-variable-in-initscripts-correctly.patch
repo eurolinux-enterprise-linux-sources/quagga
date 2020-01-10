@@ -1,0 +1,109 @@
+From fd26441fc24be411e50a203625dee55cbc20be56 Mon Sep 17 00:00:00 2001
+From: Michal Sekletar <msekleta@redhat.com>
+Date: Fri, 4 Nov 2016 14:08:48 +0100
+Subject: [PATCH] Use QCONFDIR variable in initscripts correctly
+
+---
+ redhat/bgpd.init   | 2 +-
+ redhat/isisd.init  | 2 +-
+ redhat/ospf6d.init | 2 +-
+ redhat/ospfd.init  | 2 +-
+ redhat/ripd.init   | 2 +-
+ redhat/ripngd.init | 2 +-
+ redhat/zebra.init  | 2 +-
+ 7 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/redhat/bgpd.init b/redhat/bgpd.init
+index 5620ebe..1d078d6 100644
+--- a/redhat/bgpd.init
++++ b/redhat/bgpd.init
+@@ -22,7 +22,7 @@ RETVAL=0
+ PROG="bgpd"
+ cmd=bgpd
+ LOCK_FILE=/var/lock/subsys/bgpd
+-CONF_FILE=/etc/quagga/bgpd.conf
++CONF_FILE=$QCONFDIR/bgpd.conf
+ PID_FILE=/var/run/quagga/bgpd.pid
+ 
+ case "$1" in
+diff --git a/redhat/isisd.init b/redhat/isisd.init
+index 00e8659..923ba80 100644
+--- a/redhat/isisd.init
++++ b/redhat/isisd.init
+@@ -18,7 +18,7 @@ RETVAL=0
+ PROG="isisd"
+ cmd=isisd
+ LOCK_FILE=/var/lock/subsys/isisd
+-CONF_FILE=/etc/quagga/isisd.conf
++CONF_FILE=$QCONFDIR/isisd.conf
+ PID_FILE=/var/run/quagga/isisd.pid
+ 
+ case "$1" in
+diff --git a/redhat/ospf6d.init b/redhat/ospf6d.init
+index 0848a97..5c8718a 100644
+--- a/redhat/ospf6d.init
++++ b/redhat/ospf6d.init
+@@ -21,7 +21,7 @@ RETVAL=0
+ PROG="ospf6d"
+ cmd=ospf6d
+ LOCK_FILE=/var/lock/subsys/ospf6d
+-CONF_FILE=/etc/quagga/ospf6d.conf
++CONF_FILE=$QCONFDIR/ospf6d.conf
+ PID_FILE=/var/run/quagga/ospf6d.pid
+ 
+ case "$1" in
+diff --git a/redhat/ospfd.init b/redhat/ospfd.init
+index ac71073..8518ef3 100644
+--- a/redhat/ospfd.init
++++ b/redhat/ospfd.init
+@@ -21,7 +21,7 @@ RETVAL=0
+ PROG="ospfd"
+ cmd=ospfd
+ LOCK_FILE=/var/lock/subsys/ospfd
+-CONF_FILE=/etc/quagga/ospfd.conf
++CONF_FILE=$QCONFDIR/ospfd.conf
+ PID_FILE=/var/run/quagga/ospfd.pid
+ 
+ case "$1" in
+diff --git a/redhat/ripd.init b/redhat/ripd.init
+index 90b89c5..b2fdc5d 100644
+--- a/redhat/ripd.init
++++ b/redhat/ripd.init
+@@ -21,7 +21,7 @@ RETVAL=0
+ PROG="ripd"
+ cmd=ripd
+ LOCK_FILE=/var/lock/subsys/ripd
+-CONF_FILE=/etc/quagga/ripd.conf
++CONF_FILE=$QCONFDIR/ripd.conf
+ PID_FILE=/var/run/quagga/ospfd.pid
+ 
+ case "$1" in
+diff --git a/redhat/ripngd.init b/redhat/ripngd.init
+index f1c539f..d819085 100644
+--- a/redhat/ripngd.init
++++ b/redhat/ripngd.init
+@@ -21,7 +21,7 @@ RETVAL=0
+ PROG="ripngd"
+ cmd=ripngd
+ LOCK_FILE=/var/lock/subsys/ripngd
+-CONF_FILE=/etc/quagga/ripngd.conf
++CONF_FILE=$QCONFDIR/ripngd.conf
+ PID_FILE=/var/run/quagga/ripngd.pid
+ 
+ case "$1" in
+diff --git a/redhat/zebra.init b/redhat/zebra.init
+index e28d82c..59457be 100644
+--- a/redhat/zebra.init
++++ b/redhat/zebra.init
+@@ -18,7 +18,7 @@ RETVAL=0
+ PROG="zebra"
+ cmd=zebra
+ LOCK_FILE=/var/lock/subsys/zebra
+-CONF_FILE=/etc/quagga/zebra.conf
++CONF_FILE=$QCONFDIR/zebra.conf
+ PID_FILE=/var/run/quagga/zebra.pid
+ 
+ case "$1" in
+-- 
+2.7.4
+
