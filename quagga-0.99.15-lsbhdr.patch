@@ -1,0 +1,108 @@
+diff -up quagga-0.99.15/redhat/bgpd.init.lsbhdr quagga-0.99.15/redhat/bgpd.init
+--- quagga-0.99.15/redhat/bgpd.init.lsbhdr	2010-01-26 09:06:55.854903364 +0100
++++ quagga-0.99.15/redhat/bgpd.init	2010-01-26 09:07:26.385905447 +0100
+@@ -1,8 +1,9 @@
+ #!/bin/bash
+-### BEGIN INIT INFO
+-# Provides: bgpd
+ # chkconfig: - 16 84
+ # config: /etc/quagga/bgpd.conf
++
++### BEGIN INIT INFO
++# Provides: bgpd
+ # Short-Description: A BGPv4, BGPv4+, BGPv4- routing engine
+ # Description: A BGPv4, BGPv4+, BGPv4- routing engine for use with Zebra
+ ### END INIT INFO
+diff -up quagga-0.99.15/redhat/isisd.init.lsbhdr quagga-0.99.15/redhat/isisd.init
+--- quagga-0.99.15/redhat/isisd.init.lsbhdr	2010-01-26 09:07:38.577183863 +0100
++++ quagga-0.99.15/redhat/isisd.init	2010-01-26 09:07:57.880904573 +0100
+@@ -1,10 +1,11 @@
+ #!/bin/bash
+-### BEGIN INIT INFO
+-# Provides: isisd
+ # chkconfig: - 16 84
+ # config: /etc/quagga/isisd.conf
++
++### BEGIN INIT INFO
++# Provides: isisd
+ # Short-Description: An ISIS routing engine
+-# description: An ISIS routing engine for use with Quagga
++# Description: An ISIS routing engine for use with Quagga
+ ### END INIT INFO
+ 
+ # source function library
+diff -up quagga-0.99.15/redhat/ospf6d.init.lsbhdr quagga-0.99.15/redhat/ospf6d.init
+--- quagga-0.99.15/redhat/ospf6d.init.lsbhdr	2010-01-26 09:08:12.302153648 +0100
++++ quagga-0.99.15/redhat/ospf6d.init	2010-01-26 09:08:24.141905152 +0100
+@@ -1,8 +1,9 @@
+ #!/bin/bash
+-### BEGIN INIT INFO
+-# Provides: ospf6d
+ # chkconfig: - 16 84
+ # config: /etc/quagga/ospf6d.conf
++
++### BEGIN INIT INFO
++# Provides: ospf6d
+ # Short-Description: A OSPF routing engine for IPv6
+ # Description: An OSPF routing engine for use with Zebra and IPv6
+ ### END INIT INFO
+diff -up quagga-0.99.15/redhat/ospfd.init.lsbhdr quagga-0.99.15/redhat/ospfd.init
+--- quagga-0.99.15/redhat/ospfd.init.lsbhdr	2010-01-26 09:08:47.332938279 +0100
++++ quagga-0.99.15/redhat/ospfd.init	2010-01-26 09:08:59.255952679 +0100
+@@ -1,8 +1,9 @@
+ #!/bin/bash
+-### BEGIN INIT INFO
+-# Provides: ospfd
+ # chkconfig: - 16 84
+ # config: /etc/quagga/ospfd.conf
++
++### BEGIN INIT INFO
++# Provides: ospfd
+ # Short-Description: A OSPF v2 routing engine
+ # Description: An OSPF v2 routing engine for use with Zebra
+ ### END INIT INFO
+diff -up quagga-0.99.15/redhat/ripd.init.lsbhdr quagga-0.99.15/redhat/ripd.init
+--- quagga-0.99.15/redhat/ripd.init.lsbhdr	2010-01-26 09:09:17.379154898 +0100
++++ quagga-0.99.15/redhat/ripd.init	2010-01-26 09:09:33.417905029 +0100
+@@ -1,8 +1,9 @@
+ #!/bin/bash
+-### BEGIN INIT INFO
+-# Provides: ripd
+ # chkconfig: - 16 84
+ # config: /etc/quagga/ripd.conf
++
++### BEGIN INIT INFO
++# Provides: ripd
+ # Short-Description: A RIP routing engine
+ # Description: A RIP routing engine for use with Zebra
+ ### END INIT INFO
+diff -up quagga-0.99.15/redhat/ripngd.init.lsbhdr quagga-0.99.15/redhat/ripngd.init
+--- quagga-0.99.15/redhat/ripngd.init.lsbhdr	2010-01-26 09:09:45.168935194 +0100
++++ quagga-0.99.15/redhat/ripngd.init	2010-01-26 09:10:02.713154585 +0100
+@@ -1,8 +1,9 @@
+ #!/bin/bash
+-### BEGIN INIT INFO
+-# Provides: ripngd
+ # chkconfig: - 16 84
+ # config: /etc/quagga/ripngd.conf
++
++### BEGIN INIT INFO
++# Provides: ripngd
+ # Short-Description: A RIP routing engine for IPv6
+ # Description: A RIP routing engine for use with Zebra and IPv6
+ ### END INIT INFO
+diff -up quagga-0.99.15/redhat/zebra.init.lsbhdr quagga-0.99.15/redhat/zebra.init
+--- quagga-0.99.15/redhat/zebra.init.lsbhdr	2010-01-26 10:39:02.042238770 +0100
++++ quagga-0.99.15/redhat/zebra.init	2010-01-26 10:39:18.070133989 +0100
+@@ -1,8 +1,9 @@
+ #!/bin/bash
+-### BEGIN INIT INFO
+-# Provides: zebra
+ # chkconfig: - 15 85
+ # config: /etc/quagga/zebra.conf
++
++### BEGIN INIT INFO
++# Provides: zebra
+ # Short-Description: GNU Zebra routing manager
+ # Description: GNU Zebra routing manager
+ ### END INIT INFO

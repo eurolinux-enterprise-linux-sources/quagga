@@ -1,0 +1,228 @@
+diff -up quagga-0.99.15/redhat/bgpd.init.posix quagga-0.99.15/redhat/bgpd.init
+--- quagga-0.99.15/redhat/bgpd.init.posix	2009-10-19 08:52:03.018303218 +0200
++++ quagga-0.99.15/redhat/bgpd.init	2009-10-19 09:58:18.694292887 +0200
+@@ -30,6 +30,10 @@ case "$1" in
+ 
+ 	# The process must be configured first.
+ 	[ -f $CONF_FILE ] || exit 6
++	if [ `id -u` -ne 0 ]; then
++		echo $"Insufficient privilege" 1>&2
++		exit 4
++	fi
+ 
+ 	echo -n $"Starting $PROG: "
+         daemon $cmd -d $BGPD_OPTS
+@@ -44,12 +48,12 @@ case "$1" in
+ 	[ $RETVAL -eq 0 ] && rm -f $LOCK_FILE
+ 	echo
+ 	;;
+-  restart|reload)
++  restart|reload|force-reload)
+         $0 stop
+         $0 start
+ 	RETVAL=$?
+         ;;
+-  condrestart)
++  condrestart|try-restart)
+         if [ -f $LOCK_FILE ]; then
+                 $0 stop
+ 		$0 start
+@@ -61,7 +65,7 @@ case "$1" in
+ 	RETVAL=$?
+         ;;
+   *)
+-	echo $"Usage: $0 {start|stop|restart|reload|condrestart|status}"
++	echo $"Usage: $0 {start|stop|restart|reload|force-reload|try-restart|status}"
+ 	exit 2
+ esac
+ 
+diff -up quagga-0.99.15/redhat/ospf6d.init.posix quagga-0.99.15/redhat/ospf6d.init
+--- quagga-0.99.15/redhat/ospf6d.init.posix	2009-10-19 08:54:10.135543594 +0200
++++ quagga-0.99.15/redhat/ospf6d.init	2009-10-19 09:53:29.288294085 +0200
+@@ -29,6 +29,10 @@ case "$1" in
+ 
+ 	# The process must be configured first.
+ 	[ -f $CONF_FILE ] || exit 6
++	if [ `id -u` -ne 0 ]; then
++		echo $"Insufficient privilege" 1>&2
++		exit 4
++	fi
+ 
+ 	echo -n $"Starting $PROG: "
+         daemon $cmd -d $OSPF6D_OPTS
+@@ -43,12 +47,12 @@ case "$1" in
+ 	[ $RETVAL -eq 0 ] && rm -f $LOCK_FILE
+ 	echo
+ 	;;
+-  restart|reload)
++  restart|reload|force-reload)
+         $0 stop
+         $0 start
+ 	RETVAL=$?
+         ;;
+-  condrestart)
++  condrestart|try-restart)
+         if [ -f $LOCK_FILE ]; then
+                 $0 stop
+ 		$0 start
+@@ -60,7 +64,7 @@ case "$1" in
+ 	RETVAL=$?
+         ;;
+   *)
+-	echo $"Usage: $PROG {start|stop|restart|reload|condrestart|status}"
++	echo $"Usage: $PROG {start|stop|restart|reload|force-reload|try-restart|status}"
+ 	exit 2
+ esac
+ 
+diff -up quagga-0.99.15/redhat/ospfd.init.posix quagga-0.99.15/redhat/ospfd.init
+--- quagga-0.99.15/redhat/ospfd.init.posix	2009-10-19 08:52:03.017303137 +0200
++++ quagga-0.99.15/redhat/ospfd.init	2009-10-19 09:56:42.380294279 +0200
+@@ -29,6 +29,10 @@ case "$1" in
+ 
+ 	# The process must be configured first.
+ 	[ -f $CONF_FILE ] || exit 6
++	if [ `id -u` -ne 0 ]; then
++		echo $"Insufficient privilege" 1>&2
++		exit 4
++	fi
+ 
+ 	echo -n $"Starting $PROG: "
+         daemon $cmd -d $OSPFD_OPTS
+@@ -43,12 +47,12 @@ case "$1" in
+ 	[ $RETVAL -eq 0 ] && rm -f $LOCK_FILE
+ 	echo
+ 	;;
+-  restart|reload)
++  restart|reload|force-reload)
+         $0 stop
+         $0 start
+ 	RETVAL=$?
+         ;;
+-  condrestart)
++  condrestart|try-restart)
+         if [ -f $LOCK_FILE ]; then
+                 $0 stop
+ 		$0 start
+@@ -60,7 +64,7 @@ case "$1" in
+ 	RETVAL=$?
+         ;;
+   *)
+-	echo $"Usage: $PROG {start|stop|restart|reload|condrestart|status}"
++	echo $"Usage: $PROG {start|stop|restart|reload|force-reload|try-restart|status}"
+ 	exit 2
+ esac
+ 
+diff -up quagga-0.99.15/redhat/ripd.init.posix quagga-0.99.15/redhat/ripd.init
+--- quagga-0.99.15/redhat/ripd.init.posix	2009-10-19 09:57:08.605329988 +0200
++++ quagga-0.99.15/redhat/ripd.init	2009-10-19 09:59:21.872294779 +0200
+@@ -29,6 +29,10 @@ case "$1" in
+ 
+ 	# The process must be configured first.
+ 	[ -f $CONF_FILE ] || exit 6
++	if [ `id -u` -ne 0 ]; then
++		echo $"Insufficient privilege" 1>&2
++		exit 4
++	fi
+ 
+ 	echo -n $"Starting $PROG: "
+         daemon $cmd -d $RIPD_OPTS
+@@ -43,12 +47,12 @@ case "$1" in
+ 	[ $RETVAL -eq 0 ] && rm -f $LOCK_FILE
+ 	echo
+ 	;;
+-  restart|reload)
++  restart|reload|force-reload)
+         $0 stop
+         $0 start
+ 	RETVAL=$?
+         ;;
+-  condrestart)
++  condrestart|try-restart)
+         if [ -f $LOCK_FILE ]; then
+                 $0 stop
+ 		$0 start
+@@ -60,7 +64,7 @@ case "$1" in
+ 	RETVAL=$?
+         ;;
+   *)
+-	echo $"Usage: $0 {start|stop|restart|reload|condrestart|status}"
++	echo $"Usage: $0 {start|stop|restart|reload|force-reload|try-restart|status}"
+ 	exit 2
+ esac
+ 
+diff -up quagga-0.99.15/redhat/ripngd.init.posix quagga-0.99.15/redhat/ripngd.init
+--- quagga-0.99.15/redhat/ripngd.init.posix	2009-10-19 09:59:42.545325446 +0200
++++ quagga-0.99.15/redhat/ripngd.init	2009-10-19 10:04:01.286294713 +0200
+@@ -29,6 +29,10 @@ case "$1" in
+ 
+ 	# The process must be configured first.
+ 	[ -f $CONF_FILE ] || exit 6
++	if [ `id -u` -ne 0 ]; then
++		echo $"Insufficient privilege" 1>&2
++		exit 4
++	fi
+ 
+ 	echo -n $"Starting $PROG: "
+         daemon $cmd -d $RIPNGD_OPTS
+@@ -43,12 +47,12 @@ case "$1" in
+ 	[ $RETVAL -eq 0 ] && rm -f $LOCK_FILE
+ 	echo
+ 	;;
+-  restart|reload)
++  restart|reload|force-reload)
+         $0 stop
+         $0 start
+ 	RETVAL=$?
+         ;;
+-  condrestart)
++  condrestart|try-restart)
+         if [ -f $LOCK_FILE ]; then
+                 $0 stop
+ 		$0 start
+@@ -60,7 +64,7 @@ case "$1" in
+ 	RETVAL=$?
+         ;;
+   *)
+-	echo $"Usage: $0 {start|stop|restart|reload|condrestart|status}"
++	echo $"Usage: $0 {start|stop|restart|reload|force-reload|try-restart|status}"
+ 	exit 2
+ esac
+ 
+diff -up quagga-0.99.15/redhat/zebra.init.posix quagga-0.99.15/redhat/zebra.init
+--- quagga-0.99.15/redhat/zebra.init.posix	2009-10-19 10:00:32.754573536 +0200
++++ quagga-0.99.15/redhat/zebra.init	2009-10-19 10:06:26.378294314 +0200
+@@ -26,6 +26,10 @@ case "$1" in
+ 
+ 	# The process must be configured first.
+ 	[ -f $CONF_FILE ] || exit 6
++	if [ `id -u` -ne 0 ]; then
++		echo $"Insufficient privilege" 1>&2
++		exit 4
++	fi
+ 
+ 	echo -n $"Starting $PROG: "
+ 
+@@ -43,12 +47,12 @@ case "$1" in
+ 	[ $RETVAL -eq 0 ] && rm -f $LOCK_FILE
+ 	echo
+ 	;;
+-  restart|reload)
++  restart|reload|force-reload)
+         $0 stop
+         $0 start
+ 	RETVAL=$?
+         ;;
+-  condrestart)
++  condrestart|try-restart)
+         if [ -f $LOCK_FILE ]; then
+                 $0 stop
+ 		$0 start
+@@ -60,7 +64,7 @@ case "$1" in
+ 	RETVAL=$?
+         ;;
+   *)
+-	echo $"Usage: $0 {start|stop|restart|reload|condrestart|status}"
++	echo $"Usage: $0 {start|stop|restart|reload|force-reload|try-restart|status}"
+ 	exit 2
+ esac
+ 

@@ -1,0 +1,70 @@
+--- quagga-0.96.5/redhat/bgpd.init.nostart	2004-09-09 17:20:54.329037601 -0400
++++ quagga-0.96.5/redhat/bgpd.init	2004-09-09 17:20:54.332037209 -0400
+@@ -1,6 +1,6 @@
+ #!/bin/bash
+ #
+-# chkconfig: 2345 16 84
++# chkconfig: - 16 84
+ # description: A BGPv4, BGPv4+, BGPv4- routing engine for use with Zebra
+ #
+ # processname: bgpd
+--- quagga-0.96.5/redhat/isisd.init.nostart	2004-09-09 17:20:54.335036817 -0400
++++ quagga-0.96.5/redhat/isisd.init	2004-09-09 17:20:54.337036556 -0400
+@@ -1,6 +1,6 @@
+ #!/bin/bash
+ #
+-# chkconfig: 2345 16 84
++# chkconfig: - 16 84
+ # description: An ISIS routing engine for use with Quagga
+ #
+ # processname: isisd
+--- quagga-0.96.5/redhat/ospf6d.init.nostart	2004-09-09 17:20:54.340036164 -0400
++++ quagga-0.96.5/redhat/ospf6d.init	2004-09-09 17:20:54.342035903 -0400
+@@ -1,6 +1,6 @@
+ #!/bin/bash
+ #
+-# chkconfig: 2345 16 84
++# chkconfig: - 16 84
+ # description: An OSPF routing engine for use with Zebra and IPv6
+ #
+ # processname: ospf6d
+--- quagga-0.96.5/redhat/ospfd.init.nostart	2004-09-09 17:20:54.345035511 -0400
++++ quagga-0.96.5/redhat/ospfd.init	2004-09-09 17:20:54.347035250 -0400
+@@ -1,6 +1,6 @@
+ #!/bin/bash
+ #
+-# chkconfig: 2345 16 84
++# chkconfig: - 16 84
+ # description: An OSPF v2 routing engine for use with Zebra
+ #
+ # processname: ospfd
+--- quagga-0.96.5/redhat/ripd.init.nostart	2004-09-09 17:20:54.350034858 -0400
++++ quagga-0.96.5/redhat/ripd.init	2004-09-09 17:20:54.353034466 -0400
+@@ -1,6 +1,6 @@
+ #!/bin/bash
+ #
+-# chkconfig: 2345 16 84
++# chkconfig: - 16 84
+ # description: A RIP routing engine for use with Zebra
+ #
+ # processname: ripd
+--- quagga-0.96.5/redhat/ripngd.init.nostart	2004-09-09 17:20:54.356034074 -0400
++++ quagga-0.96.5/redhat/ripngd.init	2004-09-09 17:20:54.359033682 -0400
+@@ -1,6 +1,6 @@
+ #!/bin/bash
+ #
+-# chkconfig: 2345 16 84
++# chkconfig: - 16 84
+ # description: A RIP routing engine for use with Zebra and IPv6
+ #
+ # processname: ripngd
+--- quagga-0.96.5/redhat/zebra.init.nostart	2004-09-09 17:20:54.361033421 -0400
++++ quagga-0.96.5/redhat/zebra.init	2004-09-09 17:20:54.364033029 -0400
+@@ -1,6 +1,6 @@
+ #!/bin/bash
+ #
+-# chkconfig: 2345 15 85
++# chkconfig: - 15 85
+ # description: GNU Zebra routing manager
+ #
+ # processname: zebra

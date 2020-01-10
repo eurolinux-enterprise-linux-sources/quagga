@@ -1,0 +1,9 @@
+diff -up quagga-0.99.15/tools/rrlookup.pl.perl_pth quagga-0.99.15/tools/rrlookup.pl
+--- quagga-0.99.15/tools/rrlookup.pl.perl_pth	2010-01-26 10:46:58.705919109 +0100
++++ quagga-0.99.15/tools/rrlookup.pl	2010-01-26 10:47:23.937134146 +0100
+@@ -1,4 +1,4 @@
+-#! /usr/local/bin/perl
++#!/usr/bin/perl
+ ##
+ ## Read BGPd logfile and lookup RR's whois database.
+ ##
