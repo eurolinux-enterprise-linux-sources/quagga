@@ -7,12 +7,12 @@
 
 Name: quagga
 Version: 0.99.22.4
-Release: 1%{?dist}
+Release: 5%{?dist}
 Summary: Routing daemon
 License: GPLv2+
 Group: System Environment/Daemons
 URL: http://www.quagga.net
-Source0: http://www.quagga.net/download/%{name}-%{version}.tar.xz
+Source0: http://download.savannah.gnu.org/releases/quagga/%{name}-%{version}.tar.xz
 Source1: quagga-filter-perl-requires.sh
 Source2: quagga-tmpfs.conf
 BuildRequires: systemd
@@ -27,6 +27,8 @@ Provides: routingdaemon = %{version}-%{release}
 Obsoletes: quagga-sysvinit
 
 Patch0: 0001-systemd-change-the-WantedBy-target.patch
+# Cherry-picked upstream patch:
+Patch1: 0001-bgpd-security-Fix-double-free-of-unknown-attribute.patch
 
 %define __perl_requires %{SOURCE1}
 
@@ -64,6 +66,7 @@ developing OSPF-API and quagga applications.
 %setup -q
 
 %patch0 -p1
+%patch1 -p1
 
 %build
 %configure \
@@ -225,6 +228,22 @@ fi
 %{_includedir}/quagga/ospfd/*.h
 
 %changelog
+* Mon Feb 19 2018 Ondřej Lysoněk <olysonek@redhat.com> - 0.99.22.4-5
+- Fixed CVE-2018-5379 - Double free vulnerability in bgpd when processing
+  certain forms of UPDATE message allowing to crash or potentially execute
+  arbitrary code
+- Resolves: rhbz#1546015
+
+* Thu Feb 13 2014 Michal Sekletar <msekleta@redhat.com> - 0.99.22.4-4
+- fix link to upstream tarball (#1059219)
+- reference pidfiles of quagga daemons in service files (#842309)
+
+* Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 0.99.22.4-3
+- Mass rebuild 2014-01-24
+
+* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 0.99.22.4-2
+- Mass rebuild 2013-12-27
+
 * Fri Sep 13 2013 Michal Sekletar <msekleta@redhat.com> - 0.99.22.4-1
 - update to 0.99.22.4
 
